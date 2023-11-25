@@ -10,9 +10,9 @@ import javax.inject.Inject
 
 class Repository @Inject constructor(private val api: QuestionApi) {
     
-    private val dataOrException =DataOrException<ArrayList<WorldItem>,Boolean,Exception>()
+    private val dataOrException =DataOrException<ArrayList<questionItem>,Boolean,Exception>()
     
-    suspend fun getAllNotes():DataOrException<ArrayList<WorldItem>,Boolean,Exception>{
+    suspend fun getAllNotes():DataOrException<ArrayList<questionItem>,Boolean,Exception>{
         try{
             dataOrException.loading = true
             dataOrException.data = api.getAllQuestion()
