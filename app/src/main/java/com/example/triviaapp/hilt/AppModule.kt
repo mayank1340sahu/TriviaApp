@@ -1,6 +1,5 @@
 package com.example.triviaapp.hilt
 
-import android.util.Log
 import com.example.triviaapp.Constant
 import com.example.triviaapp.network.QuestionApi
 import com.example.triviaapp.repositor.Repository
