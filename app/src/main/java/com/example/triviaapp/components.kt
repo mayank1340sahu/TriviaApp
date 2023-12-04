@@ -28,7 +28,18 @@ fun Question(viewModel: QuestionViewModel) {
     {
         CircularProgressIndicator()
         Log.d("Loading", "Question: loading") }
-    else Log.d("loading", "Question: loading Stopped")
+    else {
+        Log.d("loading", "Question: loading Stopped")
+    }
+
+    if (dataOrException != null) {
+        QuestionDisplay(question = dataOrException.first())
+    }
+    else
+    {
+        Log.d("TAG", "Question: ties lsd")
+    }
+
     dataOrException?.forEach{
         Log.d("Result", "Question:${it.question} ")
     }
@@ -36,7 +47,9 @@ fun Question(viewModel: QuestionViewModel) {
 
 @Composable
 fun DrawDottedLine(pathEffect: PathEffect){
-    Canvas(modifier = Modifier.fillMaxWidth().height(1.dp)){
+    Canvas(modifier = Modifier
+        .fillMaxWidth()
+        .height(1.dp)){
         drawLine(pathEffect = pathEffect,start = Offset.Zero, end = Offset(size.width,0f), color = Color(0xFFF3F3F3))
     }
 }
