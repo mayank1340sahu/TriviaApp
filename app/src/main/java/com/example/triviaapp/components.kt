@@ -30,18 +30,14 @@ fun Question(viewModel: QuestionViewModel) {
         Log.d("Loading", "Question: loading") }
     else {
         Log.d("loading", "Question: loading Stopped")
-    }
 
-    if (dataOrException != null) {
-        QuestionDisplay(question = dataOrException.first())
-    }
-    else
-    {
-        Log.d("TAG", "Question: ties lsd")
+            if (dataOrException != null) {
+            QuestionDisplay(question = dataOrException.first())
+                 }
     }
 
     dataOrException?.forEach{
-        Log.d("Result", "Question:${it.question} ")
+        Log.d("Result", "Question:${it.incorrectAnswers}   ${it.correctAnswer} ")
     }
 }
 

@@ -70,7 +70,8 @@ fun QuestionDisplay(
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFDFDEE2),
-                    lineHeight = 22.sp
+                    lineHeight = 22.sp,
+                    modifier = Modifier.fillMaxHeight(.4f)
                 )
                 choiceState.value.forEachIndexed { index, s ->
                     Row(
