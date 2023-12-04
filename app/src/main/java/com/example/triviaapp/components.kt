@@ -68,5 +68,6 @@ fun QuestionCounter(count:Int = 3, outOf: Int =100){
                 }
             }
         }
-    },Modifier.padding(4.dp))
+    },
+        Modifier.padding(4.dp))
 }

@@ -1,7 +1,6 @@
 package com.example.triviaapp
 
 
-import android.media.session.MediaSession.QueueItem
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -30,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.triviaapp.model.WorldItem
+import com.example.triviaapp.model.QuestionX
 import com.example.triviaapp.model.questionItem
 
 @Composable
@@ -49,12 +47,12 @@ fun QuestionDisplay(
     val correctAnswerState = rememberSaveable {
         mutableStateOf<Boolean?>(null)
     }
-    val updateAnswerState:(Int) ->Unit = rememberSaveable{
+    val updateAnswerState:(Int) ->Unit =
         {
             answerState.value = it
             correctAnswerState.value = choiceState.value[it] == question.correctAnswer
         }
-    }
+
     Surface(
         Modifier
             .fillMaxSize(),
@@ -68,7 +66,7 @@ fun QuestionDisplay(
                 Modifier
                     .fillMaxHeight(0.3f)
                     .fillMaxWidth()) {
-                Text(text = "What's the meaning of this",
+                Text(text = question.question.text,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFDFDEE2),
@@ -97,3 +95,12 @@ fun QuestionDisplay(
     }
 }
 
+@Preview
+@Composable
+fun gh() {
+    val g = questionItem("fj","dk","er","rt", listOf("ty","dk","vn"),
+        false, QuestionX("dgdss"), listOf("tr"), listOf("er","er"),"erter"
+    )
+    QuestionDisplay(question = g)
+
+}
