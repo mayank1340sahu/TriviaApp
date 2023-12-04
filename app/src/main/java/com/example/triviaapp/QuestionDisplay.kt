@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +39,13 @@ fun QuestionDisplay(
     //viewModel: QuestionViewModel,
     //onNextClick : (Int) -> Unit
 ) {
-    val choiceState = rememberSaveable {
+    val gh = rememberSaveable {
         mutableStateOf(question.incorrectAnswers)
     }
+    val choiceState = rememberSaveable{
+        mutableStateOf(gh.value+question.correctAnswer)
+    }
+    Log.d("gh ki value", "QuestionDisplay: ${choiceState.value}")
     val answerState = rememberSaveable {
         mutableStateOf<Int?>(null)
     }
@@ -85,9 +90,22 @@ fun QuestionDisplay(
                             )
                     ){
                         RadioButton(selected = answerState.value == index,
-                            onClick = { updateAnswerState(index) })
+                            onClick = { updateAnswerState(index)
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                if (correctAnswerState.value == true){
+                                    Color(0xFF5EF500)
+                                }
+                            else{
+                                Color(0xFFF71616)
+                                }
+                            )
+                        )
                         Text(text = s)
                         Log.d("hgjghgj", "QuestionDisplay: QuestionDisplay")
+                        if(correctAnswerState.value == true){
+                                    Text(text = question.correctAnswer)
+                        }
                     }
                 }
             }
