@@ -18,18 +18,14 @@ data class questionItem(
         return g
     }
     fun randomization(): List<Int> {
-        var t = listOf(3)
-       val f = choiceMerge().indexOf(choiceMerge().first())
-        val r = choiceMerge().indexOf(choiceMerge().last())
         val g = mutableListOf<Int>()
-            while(t.indexOf(t.last()) != r){
-                  g.add(
-                    (choiceMerge().indexOf(choiceMerge().first())..choiceMerge().indexOf(
-                        choiceMerge().last()
-                    )).random()
-                )
-                t = g.distinct()
+        while (g.size < choiceMerge().size) {
+            val randomIndex = (0 until choiceMerge().size).random()
+            if (!g.contains(randomIndex)) {
+                g.add(randomIndex)
             }
-    return t
+        }
+        return g
     }
+
 }

@@ -19,7 +19,10 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,40 +31,55 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.triviaapp.model.QuestionX
 import com.example.triviaapp.model.questionItem
 
 @Composable
 fun QuestionDisplay(
     question : questionItem,
-    //questionIndex : MutableState<Int>,
-    //onNextClick : (Int) -> Unit
+    questionIndex : MutableState<Int>,
+    onNextClick : (Int) -> Unit
 ) {
     val choiceState = rememberSaveable {
         mutableStateOf(question.choiceMerge())
     }
+
+    Log.d("QuestionDisplay", "New Question: ${question.question.text}")
+    Log.d("QuestionDisplay", "New Choices: ${question.choiceMerge()}")
+    Log.d("QuestionDisplay", "Current choiceState: ${choiceState.value}")
+
     val r = rememberSaveable {
         mutableStateOf(question.randomization())
     }
+
     Log.d("Random", "QuestionDisplay:${r.value}")
-    val answerState = rememberSaveable {
+    Log.d("Randomized", "QuestionDisplay:${question.choiceMerge()[r.value.first()]} ")
+
+    val answerState = remember {
         mutableStateOf<Int?>(null)
     }
-    val correctAnswerState = rememberSaveable {
+
+    val correctAnswerState = remember {
         mutableStateOf<Boolean?>(null)
     }
+
+    val click = remember {
+        mutableStateOf(false)
+    }
+
     val updateAnswerState:(Int) ->Unit =
         {
             answerState.value = it
             correctAnswerState.value = choiceState.value[it] == question.correctAnswer
         }
-    val click = rememberSaveable {
-        mutableStateOf(false)
-    }
 
+    LaunchedEffect(question){
+        choiceState.value = question.choiceMerge()
+       answerState.value = null
+        correctAnswerState.value = null
+        click.value = false
+    }
     Surface(
         Modifier
             .fillMaxSize(),
@@ -94,8 +112,12 @@ fun QuestionDisplay(
                             )
                     ){
                         RadioButton(selected = answerState.value == s,
-                            onClick = { updateAnswerState(s)
-                                click.value = true
+                            onClick = {
+                                if(!click.value)
+                                {
+                                    updateAnswerState(s)
+                                click.value = !click.value
+                                }
                             },
                             colors = RadioButtonDefaults.colors(
                                 if (correctAnswerState.value == true){
@@ -107,10 +129,10 @@ fun QuestionDisplay(
                             )
                         )
                         Text(text = choiceState.value[s],
-                            color = if (choiceState.value[s] == question.correctAnswer && correctAnswerState.value == true){
+                            color = if ((choiceState.value[s] == question.correctAnswer) && (correctAnswerState.value == true)){
                                 Color(0xFF5EF500)
                             }
-                            else if(correctAnswerState.value == false && (choiceState.value[s] != question.correctAnswer)){
+                            else if((correctAnswerState.value == false) && (choiceState.value[s] != question.correctAnswer)){
                                 Color(0xFFF71616)
                             }
                             else {
@@ -125,26 +147,16 @@ fun QuestionDisplay(
                         color = Color(0xFFFFF0F0),
                         modifier = Modifier.padding(6.dp))
             }
-                Button(onClick = { /*TODO*/ },
+                Button(onClick = { onNextClick(questionIndex.value)},
                 shape = RoundedCornerShape(34.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF04CBEE),
                         contentColor =  Color(0xFFFFF0F0))
                 ) {
                     Text(text = "Next")
                 }
-
             }
         }
 
     }
 }
 
-@Preview
-@Composable
-fun Gh() {
-    val g = questionItem("fj","dk","er","rt", listOf("ty","dk","vn"),
-        false, QuestionX("gds"), listOf("tr"), listOf("er","er"),"enter"
-    )
-    QuestionDisplay(question = g)
-
-}

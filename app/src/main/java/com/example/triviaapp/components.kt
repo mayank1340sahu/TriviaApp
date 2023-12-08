@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -24,6 +26,11 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun Question(viewModel: QuestionViewModel) {
     val dataOrException = viewModel.data.value.data?.toMutableList()
+
+    val questionIndex = rememberSaveable {
+        mutableStateOf(0)
+    }
+
     if (viewModel.data.value.loading == true)
     {
         CircularProgressIndicator()
@@ -32,12 +39,16 @@ fun Question(viewModel: QuestionViewModel) {
         Log.d("loading", "Question: loading Stopped")
 
             if (dataOrException != null) {
-            QuestionDisplay(question = dataOrException.first())
+                val currentQuestion =  dataOrException[questionIndex.value]
+                Log.d("Question", "Current Question: ${currentQuestion.question.text}")
+            QuestionDisplay(question =currentQuestion,questionIndex){
+                questionIndex.value = it+1
+            }
                  }
     }
 
     dataOrException?.forEach{
-        Log.d("Result", "Question:${it.choiceMerge()}  ${it.correctAnswer} ")
+        Log.d("Result", "Question:  ${it.correctAnswer} ")
     }
 }
 
