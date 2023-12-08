@@ -39,12 +39,17 @@ fun Question(viewModel: QuestionViewModel) {
         Log.d("loading", "Question: loading Stopped")
 
             if (dataOrException != null) {
-                val currentQuestion =  dataOrException[questionIndex.value]
+            if (questionIndex.value <10)
+                { val currentQuestion = dataOrException[questionIndex.value]
                 Log.d("Question", "Current Question: ${currentQuestion.question.text}")
             QuestionDisplay(question =currentQuestion,questionIndex){
                 questionIndex.value = it+1
             }
-                 }
+            }
+                else{
+                    questionIndex.value = 0
+            }
+            }
     }
 
     dataOrException?.forEach{

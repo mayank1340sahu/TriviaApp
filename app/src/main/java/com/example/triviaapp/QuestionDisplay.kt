@@ -23,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -152,9 +151,7 @@ fun QuestionDisplay(
                         modifier = Modifier.padding(6.dp))
             }
                 Button(onClick = {
-                    if (questionIndex.value<10) {
                         onNextClick(questionIndex.value)
-                    }
                 },
                 shape = RoundedCornerShape(34.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF04CBEE),
