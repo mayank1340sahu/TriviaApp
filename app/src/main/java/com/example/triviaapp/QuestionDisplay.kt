@@ -40,8 +40,9 @@ fun QuestionDisplay(
     question : questionItem,
     questionIndex : MutableState<Int>,
     onNextClick : (Int) -> Unit
+
 ) {
-    val choiceState = rememberSaveable {
+    val choiceState = remember {
         mutableStateOf(question.choiceMerge())
     }
 
@@ -49,12 +50,13 @@ fun QuestionDisplay(
     Log.d("QuestionDisplay", "New Choices: ${question.choiceMerge()}")
     Log.d("QuestionDisplay", "Current choiceState: ${choiceState.value}")
 
-    val r = rememberSaveable {
+    val r = remember {
         mutableStateOf(question.randomization())
     }
 
     Log.d("Random", "QuestionDisplay:${r.value}")
-    Log.d("Randomized", "QuestionDisplay:${question.choiceMerge()[r.value.first()]} ")
+    Log.d("Randomization", "QuestionDisplay: ${question.randomization()}")
+
 
     val answerState = remember {
         mutableStateOf<Int?>(null)
@@ -79,6 +81,7 @@ fun QuestionDisplay(
        answerState.value = null
         correctAnswerState.value = null
         click.value = false
+        r.value = question.randomization()
     }
     Surface(
         Modifier
@@ -87,7 +90,7 @@ fun QuestionDisplay(
     ) {
         val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f,10f),0f)
         Column(Modifier.padding(4.dp)) {
-            QuestionCounter()
+            QuestionCounter(count = questionIndex.value+1,10)
             DrawDottedLine(pathEffect)
             Column(
                 Modifier
@@ -98,13 +101,14 @@ fun QuestionDisplay(
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFDFDEE2),
                     lineHeight = 22.sp,
-                    modifier = Modifier.fillMaxHeight(.4f)
+                    modifier = Modifier.fillMaxHeight(.3f)
                 )
                 r.value.forEach { s ->
                     Row(
                         modifier = Modifier
                             .width(300.dp)
-                            .height(34.dp)
+                            .height(70.dp)
+                            .padding(8.dp)
                             .clip(RoundedCornerShape(15.dp))
                             .border(
                                 4.dp, Brush.linearGradient(listOf(Color(0xFF5B29F1), Color.Blue)),
@@ -147,7 +151,11 @@ fun QuestionDisplay(
                         color = Color(0xFFFFF0F0),
                         modifier = Modifier.padding(6.dp))
             }
-                Button(onClick = { onNextClick(questionIndex.value)},
+                Button(onClick = {
+                    if (questionIndex.value<10) {
+                        onNextClick(questionIndex.value)
+                    }
+                },
                 shape = RoundedCornerShape(34.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF04CBEE),
                         contentColor =  Color(0xFFFFF0F0))
@@ -156,7 +164,6 @@ fun QuestionDisplay(
                 }
             }
         }
-
     }
 }
 
