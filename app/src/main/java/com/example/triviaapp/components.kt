@@ -37,7 +37,7 @@ fun Question(viewModel: QuestionViewModel) {
     }
 
     dataOrException?.forEach{
-        Log.d("Result", "Question:${it.incorrectAnswers}   ${it.correctAnswer} ")
+        Log.d("Result", "Question:${it.choiceMerge()}  ${it.correctAnswer} ")
     }
 }
 

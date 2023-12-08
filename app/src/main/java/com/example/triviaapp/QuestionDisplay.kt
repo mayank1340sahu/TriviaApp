@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
@@ -36,16 +38,15 @@ import com.example.triviaapp.model.questionItem
 fun QuestionDisplay(
     question : questionItem,
     //questionIndex : MutableState<Int>,
-    //viewModel: QuestionViewModel,
     //onNextClick : (Int) -> Unit
 ) {
-    val gh = rememberSaveable {
-        mutableStateOf(question.incorrectAnswers)
+    val choiceState = rememberSaveable {
+        mutableStateOf(question.choiceMerge())
     }
-    val choiceState = rememberSaveable{
-        mutableStateOf(gh.value+question.correctAnswer)
+    val r = rememberSaveable {
+        mutableStateOf(question.randomization())
     }
-    Log.d("gh ki value", "QuestionDisplay: ${choiceState.value}")
+    Log.d("Random", "QuestionDisplay:${r.value}")
     val answerState = rememberSaveable {
         mutableStateOf<Int?>(null)
     }
@@ -57,6 +58,9 @@ fun QuestionDisplay(
             answerState.value = it
             correctAnswerState.value = choiceState.value[it] == question.correctAnswer
         }
+    val click = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Surface(
         Modifier
@@ -69,7 +73,7 @@ fun QuestionDisplay(
             DrawDottedLine(pathEffect)
             Column(
                 Modifier
-                    .fillMaxHeight(0.3f)
+                    .fillMaxHeight()
                     .fillMaxWidth()) {
                 Text(text = question.question.text,
                     fontSize = 17.sp,
@@ -78,7 +82,7 @@ fun QuestionDisplay(
                     lineHeight = 22.sp,
                     modifier = Modifier.fillMaxHeight(.4f)
                 )
-                choiceState.value.forEachIndexed { index, s ->
+                r.value.forEach { s ->
                     Row(
                         modifier = Modifier
                             .width(300.dp)
@@ -89,8 +93,9 @@ fun QuestionDisplay(
                                 RectangleShape
                             )
                     ){
-                        RadioButton(selected = answerState.value == index,
-                            onClick = { updateAnswerState(index)
+                        RadioButton(selected = answerState.value == s,
+                            onClick = { updateAnswerState(s)
+                                click.value = true
                             },
                             colors = RadioButtonDefaults.colors(
                                 if (correctAnswerState.value == true){
@@ -101,13 +106,33 @@ fun QuestionDisplay(
                                 }
                             )
                         )
-                        Text(text = s)
-                        Log.d("hgjghgj", "QuestionDisplay: QuestionDisplay")
-                        if(correctAnswerState.value == true){
-                                    Text(text = question.correctAnswer)
-                        }
+                        Text(text = choiceState.value[s],
+                            color = if (choiceState.value[s] == question.correctAnswer && correctAnswerState.value == true){
+                                Color(0xFF5EF500)
+                            }
+                            else if(correctAnswerState.value == false && (choiceState.value[s] != question.correctAnswer)){
+                                Color(0xFFF71616)
+                            }
+                            else {
+                                Color(0xFFFFF0F0)
+                            }
+                        )
                     }
+
                 }
+                if(correctAnswerState.value != null){
+                    Text(text = question.correctAnswer,
+                        color = Color(0xFFFFF0F0),
+                        modifier = Modifier.padding(6.dp))
+            }
+                Button(onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(34.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF04CBEE),
+                        contentColor =  Color(0xFFFFF0F0))
+                ) {
+                    Text(text = "Next")
+                }
+
             }
         }
 
@@ -116,9 +141,9 @@ fun QuestionDisplay(
 
 @Preview
 @Composable
-fun gh() {
+fun Gh() {
     val g = questionItem("fj","dk","er","rt", listOf("ty","dk","vn"),
-        false, QuestionX("dgdss"), listOf("tr"), listOf("er","er"),"erter"
+        false, QuestionX("gds"), listOf("tr"), listOf("er","er"),"enter"
     )
     QuestionDisplay(question = g)
 
