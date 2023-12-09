@@ -47,7 +47,7 @@ fun ScoreScreen(score : Int,restart:()-> Unit) {
                     )
                 )
                 Button(onClick = { restart() }) {
-                    Text(text = "Retry")
+                    Text(text = "Play Again")
                 }
             }
         }
