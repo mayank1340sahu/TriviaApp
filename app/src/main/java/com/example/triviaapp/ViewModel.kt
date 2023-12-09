@@ -27,4 +27,7 @@ class QuestionViewModel @Inject constructor(private val repository: Repository) 
             if(data.value.data.toString().isNotEmpty()) data.value.loading = false
         }
     }
+    fun getSize(): Int {
+        return data.value.data?.toMutableList()?.size!!
+    }
 }

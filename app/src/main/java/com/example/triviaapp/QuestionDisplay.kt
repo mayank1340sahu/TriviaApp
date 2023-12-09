@@ -23,6 +23,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -38,8 +40,8 @@ import com.example.triviaapp.model.questionItem
 fun QuestionDisplay(
     question : questionItem,
     questionIndex : MutableState<Int>,
+    viewModel: QuestionViewModel,
     onNextClick : (Int) -> Unit
-
 ) {
     val choiceState = remember {
         mutableStateOf(question.choiceMerge())
@@ -74,6 +76,9 @@ fun QuestionDisplay(
             answerState.value = it
             correctAnswerState.value = choiceState.value[it] == question.correctAnswer
         }
+    val scoreState = rememberSaveable {
+        mutableStateOf(0)
+    }
 
     LaunchedEffect(question){
         choiceState.value = question.choiceMerge()
@@ -89,12 +94,19 @@ fun QuestionDisplay(
     ) {
         val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f,10f),0f)
         Column(Modifier.padding(4.dp)) {
-            QuestionCounter(count = questionIndex.value+1,10)
+
+            Log.d("score", "QuestionDisplay: ${scoreState.value}")
+                ProgressBar(score = scoreState.value)
+
+
+            QuestionCounter(count = questionIndex.value+1,viewModel.getSize())
+
             DrawDottedLine(pathEffect)
-            Column(
-                Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()) {
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally,
+               modifier = Modifier
+                   .fillMaxHeight()
+                   .fillMaxWidth()) {
                 Text(text = question.question.text,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
@@ -103,8 +115,8 @@ fun QuestionDisplay(
                     modifier = Modifier.fillMaxHeight(.3f)
                 )
                 r.value.forEach { s ->
-                    Row(
-                        modifier = Modifier
+                    Row(verticalAlignment = Alignment.CenterVertically
+                        ,modifier = Modifier
                             .width(300.dp)
                             .height(70.dp)
                             .padding(8.dp)
@@ -140,7 +152,7 @@ fun QuestionDisplay(
                             }
                             else {
                                 Color(0xFFFFF0F0)
-                            }
+                            }, modifier = Modifier.padding(3.dp)
                         )
                     }
 
@@ -152,6 +164,11 @@ fun QuestionDisplay(
             }
                 Button(onClick = {
                         onNextClick(questionIndex.value)
+                    if(correctAnswerState.value == true) { scoreState.value = scoreState.value+1 }
+
+                    else if((correctAnswerState.value == false) && (scoreState.value > 0)) {
+                        scoreState.value = scoreState.value - 1
+                    }
                 },
                 shape = RoundedCornerShape(34.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF04CBEE),
