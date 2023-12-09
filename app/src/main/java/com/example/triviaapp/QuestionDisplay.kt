@@ -41,6 +41,7 @@ fun QuestionDisplay(
     question : questionItem,
     questionIndex : MutableState<Int>,
     viewModel: QuestionViewModel,
+    scoreState : MutableState<Int>,
     onNextClick : (Int) -> Unit
 ) {
     val choiceState = remember {
@@ -76,9 +77,7 @@ fun QuestionDisplay(
             answerState.value = it
             correctAnswerState.value = choiceState.value[it] == question.correctAnswer
         }
-    val scoreState = rememberSaveable {
-        mutableStateOf(0)
-    }
+
 
     LaunchedEffect(question){
         choiceState.value = question.choiceMerge()

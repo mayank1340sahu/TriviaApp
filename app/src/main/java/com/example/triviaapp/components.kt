@@ -24,6 +24,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -33,11 +34,21 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 @Composable
 fun Question(viewModel: QuestionViewModel) {
     val dataOrException = viewModel.data.value.data?.toMutableList()
 
+    val scoreState = rememberSaveable {
+        mutableStateOf(0)
+    }
     val questionIndex = rememberSaveable {
         mutableStateOf(0)
     }
@@ -53,12 +64,14 @@ fun Question(viewModel: QuestionViewModel) {
             if (questionIndex.value <10)
                 { val currentQuestion = dataOrException[questionIndex.value]
                 Log.d("Question", "Current Question: ${currentQuestion.question.text}")
-            QuestionDisplay(question =currentQuestion,questionIndex,viewModel){
+            QuestionDisplay(question =currentQuestion,questionIndex,viewModel,scoreState){
                 questionIndex.value = it+1
             }
             }
                 else{
-                    questionIndex.value = 0
+                   ScoreScreen(scoreState.value){
+                       questionIndex.value = 0
+                   }
             }
             }
     }
