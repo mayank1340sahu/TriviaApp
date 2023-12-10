@@ -71,6 +71,7 @@ fun Question(viewModel: QuestionViewModel) {
                 else{
                    ScoreScreen(scoreState.value){
                        questionIndex.value = 0
+                       scoreState.value = 0
                    }
             }
             }
